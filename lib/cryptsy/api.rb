@@ -1,0 +1,157 @@
+require "cryptsy/api/version"
+require "httparty"
+require "uri"
+require "openssl"
+require "json"
+
+module Cryptsy
+  module API
+    class PublicMethod
+      include HTTParty
+      base_uri "http://pubapi.cryptsy.com"
+
+      def execute_method(all_markets, single_market, marketid)
+        api_method = marketid.nil? ? all_markets : single_market
+        query = {method: api_method}
+        query["marketid"] = marketid if marketid
+
+        response = self.class.get("/api.php", query: query)
+        JSON.parse(response.body)
+      end
+    end
+
+    class PrivateMethod
+      include HTTParty
+      base_uri "https://www.cryptsy.com"
+      debug_output $stderr
+
+      def initialize(key=nil, secret=nil)
+        @key = key
+        @secret = secret
+      end
+
+      def execute_method(method_name, params)
+        post_data = {method: method_name, nonce: nonce}.merge(params)
+        post_body = URI.encode_www_form(post_data)
+
+        response = self.class.post("/api",
+                           headers: { "User-Agent" => "Mozilla/4.0 (compatible; Cryptsy API ruby client)",
+                                    "Sign" => signed_message(post_body),
+                                    "Key" => @key,
+                           },
+                           body: post_data)
+        JSON.parse(response.body)
+     end
+
+     private
+
+       def nonce
+         Time.now.to_i
+       end
+
+       def signed_message(msg)
+         OpenSSL::HMAC.hexdigest('sha512', @secret, msg)
+       end
+
+    end
+
+    class Client
+      def initialize(key=nil, secret=nil)
+        @key = key
+        @secret = secret
+      end
+
+      # Public APIs
+
+      # We don't bother to support deprecated v1 api
+      def marketdata(marketid=nil)
+        call_public_api("marketdata", "singlemarketdata", marketid)
+      end
+
+      def orderdata(marketid=nil)
+        call_public_api("orderdata", "singleorderdata", marketid)
+      end
+
+      # Private APIs
+
+      def getinfo
+        call_private_api("getinfo", {})
+      end
+
+      def getmarkets
+        call_private_api("getmarkets", {})
+      end
+
+      def mytransactions
+        call_private_api("mytransactions", {})
+      end
+
+      def markettrades(marketid)
+        call_private_api("markettrades", {marketid: marketid})
+      end
+
+      def marketorders(marketid)
+        call_private_api("marketorders", {marketid: marketid})
+      end
+
+      def mytrades(marketid, limit)
+        params = {marketid: marketid}
+        params.merge({limit: limit}) if limit
+        call_private_api("mytrades", params)
+      end
+
+      def allmytrades
+        call_private_api("allmytrades", {})
+      end
+
+      def myorders(marketid)
+        call_private_api("myorders", {marketid: marketid})
+      end
+
+      def allmyorders
+        call_private_api("allmyorders", {})
+      end 
+
+      def createorder(marketid, ordertype, quantity, price)
+        call_private_api("createorder", 
+                         {marketid: marketid,
+                          ordertype: ordertype,
+                          quantity: quantity,
+                          price: price})
+      end
+
+      def cancelorder(orderid)
+        call_private_api("cancelorder", {orderid: orderid})
+      end
+
+      def cancelmarketorders(marketid)
+        call_private_api("cancelmarketorders", {marketid: marketid})
+      end
+
+      def cancelallorders
+        call_private_api("cancelallorders", {})
+      end
+
+      def calculatefees(ordertype, quantity, price)
+        call_private_api("calculatefees", 
+                         {ordertype: ordertype,
+                          quantity: quantity,
+                          price: price})
+      end
+
+      def generatenewaddress(currencyid, currencycode)
+        call_private_api("generatenewaddress", {currencyid: currencyid,
+                                                currencycode: currencycode})
+      end
+
+      private
+        def call_public_api(all_markets, single_market, marketid=nil)
+          Cryptsy::API::PublicMethod.new.execute_method(all_markets, single_market, marketid)
+        end
+
+        def call_private_api(method_name, params={})
+          Cryptsy::API::PrivateMethod.new(@key,@secret).execute_method(method_name, params)
+        end
+    end
+  end
+end
