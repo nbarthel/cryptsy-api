@@ -2,6 +2,8 @@
 
 A first stab at a Ruby implementation of the Cryptsy API.
 
+NOTE: Tests have credentials removed to protect the innocent, and thus private API tests will fail out of the box.
+
 ## Installation
 
 Add this line to your application's Gemfile:
