@@ -23,7 +23,6 @@ module Cryptsy
     class PrivateMethod
       include HTTParty
       base_uri "https://www.cryptsy.com"
-      debug_output $stderr
 
       def initialize(key=nil, secret=nil)
         @key = key
