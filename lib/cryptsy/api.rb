@@ -138,9 +138,13 @@ module Cryptsy
                           price: price})
       end
 
-      def generatenewaddress(currencyid, currencycode)
-        call_private_api("generatenewaddress", {currencyid: currencyid,
-                                                currencycode: currencycode})
+      def generatenewaddress(currency)
+        # if integer - it is currency id
+        if currency.is_a? Integer or !!(currency =~ /^[-+]?[0-9]+$/)  then
+          call_private_api("generatenewaddress", {currencyid: currency})
+        else
+          call_private_api("generatenewaddress", {currencycode: currency})
+        end
       end
 
       private
