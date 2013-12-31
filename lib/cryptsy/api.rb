@@ -93,7 +93,7 @@ module Cryptsy
         call_private_api("marketorders", {marketid: marketid})
       end
 
-      def mytrades(marketid, limit)
+      def mytrades(marketid, limit=nil)
         params = {marketid: marketid}
         params.merge({limit: limit}) if limit
         call_private_api("mytrades", params)
