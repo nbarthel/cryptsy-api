@@ -40,7 +40,11 @@ module Cryptsy
                            },
                            body: post_data)
         JSON.parse(response.body)
-     end
+      end
+
+      def auth_changed?(key, secret)
+        return @key == key && @secret == secret
+      end
 
      private
 
@@ -58,6 +62,7 @@ module Cryptsy
       def initialize(key=nil, secret=nil)
         @key = key
         @secret = secret
+        @private_caller = nil
       end
 
       # Public APIs
@@ -153,7 +158,10 @@ module Cryptsy
         end
 
         def call_private_api(method_name, params={})
-          Cryptsy::API::PrivateMethod.new(@key,@secret).execute_method(method_name, params)
+          if @private_caller.nil? || @private_caller.auth_changed?(@key, @secret)
+            @private_caller = Cryptsy::API::PrivateMethod.new(@key,@secret)
+          end
+          @private_caller.execute_method(method_name, params)
         end
     end
   end
