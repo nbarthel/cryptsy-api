@@ -98,6 +98,10 @@ module Cryptsy
         call_private_api("marketorders", {marketid: marketid})
       end
 
+      def depth(marketid)
+        call_private_api("depth", {marketid: marketid})
+      end
+
       def mytrades(marketid, limit=nil)
         params = {marketid: marketid}
         params.merge({limit: limit}) if limit
@@ -114,10 +118,10 @@ module Cryptsy
 
       def allmyorders
         call_private_api("allmyorders", {})
-      end 
+      end
 
       def createorder(marketid, ordertype, quantity, price)
-        call_private_api("createorder", 
+        call_private_api("createorder",
                          {marketid: marketid,
                           ordertype: ordertype,
                           quantity: quantity,
@@ -137,7 +141,7 @@ module Cryptsy
       end
 
       def calculatefees(ordertype, quantity, price)
-        call_private_api("calculatefees", 
+        call_private_api("calculatefees",
                          {ordertype: ordertype,
                           quantity: quantity,
                           price: price})
