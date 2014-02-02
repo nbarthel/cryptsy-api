@@ -22,7 +22,7 @@ module Cryptsy
 
     class PrivateMethod
       include HTTParty
-      base_uri "https://www.cryptsy.com"
+      base_uri "https://api.cryptsy.com"
 
       def initialize(key=nil, secret=nil)
         @key = key
@@ -114,10 +114,10 @@ module Cryptsy
 
       def allmyorders
         call_private_api("allmyorders", {})
-      end 
+      end
 
       def createorder(marketid, ordertype, quantity, price)
-        call_private_api("createorder", 
+        call_private_api("createorder",
                          {marketid: marketid,
                           ordertype: ordertype,
                           quantity: quantity,
@@ -137,7 +137,7 @@ module Cryptsy
       end
 
       def calculatefees(ordertype, quantity, price)
-        call_private_api("calculatefees", 
+        call_private_api("calculatefees",
                          {ordertype: ordertype,
                           quantity: quantity,
                           price: price})
