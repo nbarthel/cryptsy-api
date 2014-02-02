@@ -22,7 +22,7 @@ module Cryptsy
 
     class PrivateMethod
       include HTTParty
-      base_uri "https://www.cryptsy.com"
+      base_uri "https://api.cryptsy.com"
 
       def initialize(key=nil, secret=nil)
         @key = key
