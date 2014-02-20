@@ -86,6 +86,10 @@ module Cryptsy
         call_private_api("getmarkets", {})
       end
 
+      def getwalletstatus
+        call_private_api("getwalletstatus", {})
+      end
+
       def mytransactions
         call_private_api("mytransactions", {})
       end
@@ -108,8 +112,24 @@ module Cryptsy
         call_private_api("mytrades", params)
       end
 
-      def allmytrades
-        call_private_api("allmytrades", {})
+      def allmytrades(startdate=nil,enddate=nil)
+        params = {}
+
+	if !startdate.nil?
+          if startdate.is_a?(Date)
+            startdate = startdate.strftime("%Y-%m-%d")
+          end
+          params[:startdate] = startdate
+        end
+
+	if !enddate.nil?
+          if enddate.is_a?(Date)
+            enddate = enddate.strftime("%Y-%m-%d")
+          end
+          params[:enddate] = enddate
+        end
+
+        call_private_api("allmytrades", params)
       end
 
       def myorders(marketid)
@@ -154,6 +174,14 @@ module Cryptsy
         else
           call_private_api("generatenewaddress", {currencycode: currency})
         end
+      end
+
+      def mytransfers
+        call_private_api("mytransfers", {})
+      end
+
+      def makewithdrawl(address, amount)
+        call_private_api("makewithdrawl", {address: address, amount: amount})
       end
 
       private
