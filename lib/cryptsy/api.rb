@@ -180,8 +180,8 @@ module Cryptsy
         call_private_api("mytransfers", {})
       end
 
-      def makewithdrawl(address, amount)
-        call_private_api("makewithdrawl", {address: address, amount: amount})
+      def makewithdrawal(address, amount)
+        call_private_api("makewithdrawal", {address: address, amount: amount})
       end
 
       private
