@@ -69,7 +69,7 @@ module Cryptsy
 
       # We don't bother to support deprecated v1 api
       def marketdata(marketid=nil)
-        call_public_api("marketdata", "singlemarketdata", marketid)
+        call_public_api("marketdatav2", "singlemarketdata", marketid)
       end
 
       def orderdata(marketid=nil)
