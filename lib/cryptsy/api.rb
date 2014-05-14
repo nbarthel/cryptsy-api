@@ -184,6 +184,10 @@ module Cryptsy
         call_private_api("makewithdrawal", {address: address, amount: amount})
       end
 
+      def getmydepositaddresses
+        call_private_api("getmydepositaddresses", {})
+      end
+
       private
         def call_public_api(all_markets, single_market, marketid=nil)
           Cryptsy::API::PublicMethod.new.execute_method(all_markets, single_market, marketid)
