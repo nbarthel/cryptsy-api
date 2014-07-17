@@ -188,6 +188,10 @@ module Cryptsy
         call_private_api("getmydepositaddresses", {})
       end
 
+      def getorderstatus(orderid)
+        call_private_api("getorderstatus", {orderid: orderid})
+      end
+
       private
         def call_public_api(all_markets, single_market, marketid=nil)
           Cryptsy::API::PublicMethod.new.execute_method(all_markets, single_market, marketid)
